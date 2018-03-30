@@ -5,18 +5,11 @@ import java.io.IOException;
 
 public class Sample {
 
-    public static void main (String[] args) throws IOException {
+    public static void main (String[] args) {
 
         String pathToFile="C:/Example/text.txt";
         File file=new File(pathToFile);
 
-        //System.out.println(file.canRead());
-
-        Students students = new Students(file);
-
-        for (Student student : students) {
-            System.out.println(student);
-        }
-
+        new Students(file).forEach(System.out::println);
     }
 }

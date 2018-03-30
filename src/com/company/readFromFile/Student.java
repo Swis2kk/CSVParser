@@ -17,7 +17,7 @@ public class Student {
     public static Student parse(String value) {
         String [] splits = value.split(";");
 
-        return new Student(splits[0], splits[1], Integer.getInteger(splits[2]), splits[3]);
+        return new Student(splits[0], splits[1], Integer.valueOf(splits[2]), splits[3]);
     }
 
     @Override

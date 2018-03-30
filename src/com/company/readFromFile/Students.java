@@ -3,8 +3,9 @@ package com.company.readFromFile;
 import java.io.*;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 
-public class Students implements Iterable<Student> {
+public class Students {
 
     private final File file;
 
@@ -15,31 +16,29 @@ public class Students implements Iterable<Student> {
         if (!file.isFile()) {
             throw new IllegalArgumentException("This is not file.");
         }
-        this.file=file;
+
+        this.file = file;
     }
 
-    public void add(Student student) {
-
-    }
-
-    @Override
-    public Iterator<Student> iterator () {
-        return new FileIterator();
+    public void forEach (Consumer<Student> consumer) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            //reader.lines().
+            for (FileIterator iterator=new FileIterator(reader); iterator.hasNext();) {
+                consumer.accept(iterator.next());
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private class FileIterator implements Iterator<Student> {
 
-        private BufferedReader bufferedReader;
-
-        FileIterator () {
-            try {
-                bufferedReader=new BufferedReader(new FileReader(file));
-            } catch (FileNotFoundException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
-
+        private final BufferedReader reader;
         private String nextLine=null;
+
+        public FileIterator (BufferedReader reader) {
+            this.reader = reader;
+        }
 
         @Override
         public boolean hasNext () {
@@ -47,7 +46,7 @@ public class Students implements Iterable<Student> {
                 return true;
             } else {
                 try {
-                    nextLine=bufferedReader.readLine();
+                    nextLine=reader.readLine();
                     return nextLine != null;
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
